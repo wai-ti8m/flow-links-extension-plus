@@ -9,9 +9,9 @@
   </picture>
 </p>
 
-# FlowLinks - Dynamic Links Alternative
+# FlowLinks Plus - Dynamic Links Alternative
 
-**Author**: JauntyBrain ([https://www.jauntybrain.com](https://www.jauntybrain.com))
+**Original Author**: JauntyBrain ([https://www.jauntybrain.com](https://www.jauntybrain.com))
 
 **Install**: Follow [this link](https://console.firebase.google.com/project/_/extensions/install?ref=jauntybrain/firebase-flow-links).
 

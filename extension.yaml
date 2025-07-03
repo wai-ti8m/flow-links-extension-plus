@@ -1,23 +1,22 @@
-name: firebase-flow-links
+name: firebase-flow-links-plus
 version: 0.1.5
 specVersion: v1beta
 
-displayName: FlowLinks - Dynamic Links Alternative
+displayName: FlowLinks Plus - Dynamic Links Alternative
 
 author:
-  authorName: JauntyBrain
-  url: https://github.com/jauntybrain/
+  authorName: wai
+  url: https://github.com/wai-ti8m/
 
-description: A powerful alternative to Dynamic Links.
-
+description: Fork of FlowLinks (https://github.com/jauntybrain/flow-links-extension/tree/main)
 icon: icon.png
 
 license: Apache-2.0
 
 tags: [marketing, utilities]
 
-sourceUrl: https://github.com/jauntybrain/flow-links-extension/tree/main
-releaseNotesUrl: https://github.com/jauntybrain/flow-links-extension/tree/main/CHANGELOG.md
+sourceUrl: https://github.com/wai-ti8m/flow-links-extension-plus/tree/main
+releaseNotesUrl: https://github.com/wai-ti8m/flow-links-extension-plus/tree/main/CHANGELOG.md
 
 billingRequired: true
 
@@ -108,7 +107,7 @@ params:
         value: southamerica-east1
       - label: Sydney (australia-southeast1)
         value: australia-southeast1
-    default: us-central1
+    default: europe-west6
     required: true
     immutable: true
 
@@ -138,6 +137,16 @@ params:
     validationErrorMessage: Invalid team ID format.
     required: true
 
+  - param: IOS_APPSTORE_ID
+    label: App Store ID of your iOS application
+    description: >
+      Your App Store ID is required to link iOS Users to the App Store to download the app.
+    type: string
+    example: 1111111111
+    validationRegex: ^([0-9]*)$
+    validationErrorMessage: Invalid App Store ID format.
+    required: true
+
   - param: ANDROID_BUNDLE_ID
     label: Bundle ID of your Android application
     description: >
@@ -151,8 +160,8 @@ params:
     validationErrorMessage: Invalid bundle ID format.
     required: true
 
-  - param: ANDROID_SHA
-    label: Android SHA256 Fingerprint
+  - param: ANDROID_SHAS
+    label: Android SHA256 Fingerprints
     description: >
       You can find your Android app **SHA Fingerprints**
       [here](https://console.firebase.google.com/project/${PROJECT_ID}/settings/general/).
@@ -160,6 +169,7 @@ params:
       must be written in **all caps**. Refer to [this
       guide](https://developer.android.com/training/app-links/verify-android-applinks#web-assoc)
       for more information.
+      Use commas to separate the SHAs.
     type: string
     example: FF:2A:CF:7B:DD:CC:F1:03:3E:E8:B2:27:7C:A2:E3:3C:DE:13:DB:AC:8E:EB:3A:B9:72:A1:0E:26:8A:F5:EC:AF
     required: false

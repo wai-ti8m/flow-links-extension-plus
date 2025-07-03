@@ -4,8 +4,9 @@ export interface Config {
   location: string;
   iosBundleID: string;
   iosTeamID: string;
+  iosAppStoreID: string;
   androidBundleID: string;
-  androidSHA?: string;
+  androidSHAs?: string[];
   androidScheme?: string;
   domainPostfix: string;
 }
@@ -16,8 +17,9 @@ const config: Config = {
   location: process.env.LOCATION || 'us-west1',
   iosBundleID: process.env.IOS_BUNDLE_ID || '',
   iosTeamID: process.env.IOS_TEAM_ID || '',
+  iosAppStoreID: process.env.IOS_APPSTORE_ID || '',
   androidBundleID: process.env.ANDROID_BUNDLE_ID || '',
-  androidSHA: process.env.ANDROID_SHA || '',
+  androidSHAs: (process.env.ANDROID_SHAS || '').split(',').map(sha => sha.trim()),
   androidScheme: process.env.ANDROID_SCHEME || '',
   domainPostfix: process.env.DOMAIN_POSTFIX || 'flowlinks',
 };

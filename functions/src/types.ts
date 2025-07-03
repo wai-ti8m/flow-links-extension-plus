@@ -9,4 +9,6 @@ export default interface FlowLink {
   redirectToStore?: boolean;
   redirectUrl?: string;
   expires?: Timestamp;
+  iosPath?: string;
+  androidSchema?: string;
 }

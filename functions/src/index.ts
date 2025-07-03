@@ -14,8 +14,9 @@ const {
   location,
   iosBundleID,
   iosTeamID,
+  iosAppStoreID,
   androidBundleID,
-  androidSHA,
+  androidSHAs,
   androidScheme,
   domainPostfix,
 } = config;
@@ -152,7 +153,7 @@ app.get('/.well-known/assetlinks.json', (req, res) => {
         target: {
           namespace: 'android_app',
           package_name: androidBundleID,
-          sha256_cert_fingerprints: [androidSHA],
+          sha256_cert_fingerprints: androidSHAs,
         },
       },
     ]),
@@ -236,7 +237,7 @@ async function getFlowLinkResponse(flowLink: FlowLink): Promise<string> {
   // Get iOS AppStore appID
   let appStoreID = '';
   if (redirectToStore) {
-    appStoreID = (await getAppStoreID(iosBundleID)) || '';
+    appStoreID = iosAppStoreID;
   }
 
   const templatePath = path.join(__dirname, './assets/html/index.html');
@@ -255,25 +256,4 @@ async function getFlowLinkResponse(flowLink: FlowLink): Promise<string> {
     .replaceAll('{{flPoweredImage}}', flPoweredImage);
 
   return source;
-}
-
-// Get AppStore numeric ID
-async function getAppStoreID(bundleId: string): Promise<string | null> {
-  try {
-    const response = await axios.get(
-      `http://itunes.apple.com/lookup?bundleId=${bundleId}`,
-    );
-
-    if (response.data && response.data.results.length > 0) {
-      const appInfo = response.data.results[0];
-      if (appInfo.trackId) {
-        return appInfo.trackId;
-      }
-    }
-
-    return null; // App Store URL not found in the response
-  } catch (error) {
-    functions.logger.error('Error fetching data from iTunes API:', error);
-    return null;
-  }
 }
