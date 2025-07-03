@@ -72,7 +72,7 @@
     if ('{{redirectToStore}}' == 'true') {
       var result = detect.parse(navigator.userAgent);
       if (result.os.family === 'iOS') {
-        window.location.href = 'https://apps.apple.com/us/app/{{iosAppStoreID}}';
+        window.location.href = 'https://apps.apple.com/us/app/{{appStoreID}}';
       } else if (result.os.family.includes('Android')) {
         if ('{{androidScheme}}' != 'false') {
           const fallbackUrl = encodeURIComponent(
