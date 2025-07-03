@@ -211,3 +211,12 @@ params:
     validationErrorMessage: Invalid postfix format.
     required: true
     immutable: true
+
+  - param: SUB_DOMAIN
+    label: Sub-domain override
+    description: >
+      Overrides the sub-domain. When this is provided the domain postfix is ignored.
+    type: string
+    validationRegex: ^([0-9a-zA-Z_.-]*)$
+    validationErrorMessage: Invalid postfix format.
+    immutable: true

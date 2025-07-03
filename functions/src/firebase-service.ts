@@ -3,16 +3,14 @@ import { logger } from 'firebase-functions';
 
 import { GoogleAuth } from 'google-auth-library';
 
-import config from './config';
-
-const { projectID, domainPostfix } = config;
-
 // Handles Firebase-associated REST API requests
 export class FirebaseService {
   private readonly firebaseHostingURL =
     'https://firebasehosting.googleapis.com/v1beta1';
 
   private accessToken: string | undefined;
+
+  constructor(private readonly projectID: string) {}
 
   // Get common JSON headers
   private get jsonHeaders() {
@@ -46,11 +44,9 @@ export class FirebaseService {
   }
 
   // Create new Hosting website
-  public async createNewWebsite(): Promise<string> {
-    const siteID = `${projectID}-${domainPostfix}`;
-
+  public async createNewWebsite(siteID: string): Promise<string> {
     try {
-      const url = `${this.firebaseHostingURL}/projects/${projectID}/sites?siteId=${siteID}`;
+      const url = `${this.firebaseHostingURL}/projects/${this.projectID}/sites?siteId=${siteID}`;
       await axios.post(url, {}, { headers: this.jsonHeaders });
     } catch (error) {
       if (isAxiosError(error)) {

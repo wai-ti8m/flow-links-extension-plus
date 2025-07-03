@@ -9,6 +9,7 @@ export interface Config {
   androidSHAs?: string[];
   androidScheme?: string;
   domainPostfix: string;
+  subdomain: string;
 }
 
 const config: Config = {
@@ -22,6 +23,7 @@ const config: Config = {
   androidSHAs: (process.env.ANDROID_SHAS || '').split(',').map(sha => sha.trim()),
   androidScheme: process.env.ANDROID_SCHEME || '',
   domainPostfix: process.env.DOMAIN_POSTFIX || 'flowlinks',
+  subdomain: process.env.SUB_DOMAIN || `${process.env.PROJECT_ID || ''}.${process.env.DOMAIN_POSTFIX || 'flowlinks'}`,
 };
 
 export default config;

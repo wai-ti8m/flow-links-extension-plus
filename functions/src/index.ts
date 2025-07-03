@@ -18,7 +18,7 @@ const {
   androidBundleID,
   androidSHAs,
   androidScheme,
-  domainPostfix,
+  subdomain,
 } = config;
 
 // Initialize Express app
@@ -31,7 +31,7 @@ admin.initializeApp();
 exports.api = functions.https.onRequest(app);
 
 // FlowLinks domain name
-const hostname = `${projectID}-${domainPostfix}.web.app`;
+const hostname = `${subdomain}.web.app`;
 
 // Initializate extension
 exports.initialize = functions.tasks.taskQueue().onDispatch(async () => {
@@ -44,11 +44,11 @@ exports.initialize = functions.tasks.taskQueue().onDispatch(async () => {
     const collection = db.collection('_flowlinks_');
 
     // Initialize Firebase Service
-    const firebaseService = new FirebaseService();
+    const firebaseService = new FirebaseService(projectID);
     await firebaseService.init();
 
     // Create a new website
-    const siteID = await firebaseService.createNewWebsite();
+    const siteID = await firebaseService.createNewWebsite(subdomain);
 
     // Specify website config
     const configPayload = {
