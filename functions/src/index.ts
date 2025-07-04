@@ -179,14 +179,8 @@ app.get('*', async (req: express.Request<{ lng: string }, any, any, any, Record<
     const linkPath = urlObject.pathname;
 
     // Fetch link document
-    let linkSnapshot: admin.firestore.QuerySnapshot<admin.firestore.DocumentData>
-    if (linkPath.startsWith('/s/')) {
-      const snapshotQuery = collection.where('shortpath', '==', linkPath.substring('/s/'.length)).limit(1);
-      linkSnapshot =  await snapshotQuery.get();
-    } else {
-      const snapshotQuery = collection.where('path', '==', linkPath).limit(1);
-      linkSnapshot =  await snapshotQuery.get();
-    }
+    const snapshotQuery = collection.where('path', '==', linkPath).limit(1);
+    const linkSnapshot = await snapshotQuery.get();
 
     const linkFound = linkSnapshot.docs.length !== 0;
 
@@ -197,7 +191,7 @@ app.get('*', async (req: express.Request<{ lng: string }, any, any, any, Record<
 
     const flowLink = linkSnapshot.docs[0].data() as FlowLink;
 
-    const lang = req.params.lng;
+    const lang = req.params.lng || 'de';
 
     const source = await getFlowLinkResponse(flowLink, lang);
 
@@ -229,9 +223,16 @@ function getNotFoundResponse(): string {
 
 async function getFlowLinkResponse(flowLink: FlowLink, lang: string): Promise<string> {
   // Gather metadata
-  let title = flowLink['og']?.title?.[lang] || '';
-  let description = flowLink['og']?.description?.[lang] || '';
-  let image = flowLink['og']?.image?.[lang] || '';
+  const og = flowLink.og || {};
+  const title = (og.title || {})[lang] || '';
+  const description = (og.description || {})[lang] || '';
+  const image = (og.image || {})[lang] || '';
+
+  functions.logger.debug(`
+    lang = ${lang}
+    title = ${title},
+    description = ${description}
+  `);
 
   const redirectToStore = flowLink.redirectToStore || false;
   const redirectUrl = flowLink.redirectUrl || '';
@@ -265,6 +266,8 @@ async function getFlowLinkResponse(flowLink: FlowLink, lang: string): Promise<st
     .replaceAll('{{statusImage}}', statusImage)
     .replaceAll('{{backgroundImage}}', backgroundImage)
     .replaceAll('{{flPoweredImage}}', flPoweredImage);
+
+    functions.logger.debug('html', source);
 
   return source;
 }
