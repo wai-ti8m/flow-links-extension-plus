@@ -79,11 +79,13 @@ exports.initialize = functions.tasks.taskQueue().onDispatch(async () => {
     // Add a sample flow link
     await collection.add({
       path: '/welcome',
-      'og:title': 'Welcome to FlowLinks',
-      'og:description': 'Time to set them up!',
-      'og:image': `https://${siteID}.web.app/images/thumb.jpg`,
       redirectToStore: false,
       redirectUrl: '',
+      og: {
+        title: { en:'Welcome to FlowLinks',  },
+        description: { en:'Time to set them up!',  },
+        image: { en:`https://${siteID}.web.app/images/thumb.jpg`,  },
+      }
     });
 
     // Cold start the instance
@@ -165,7 +167,7 @@ app.get('/.well-known/assetlinks.json', (req, res) => {
 app.use('/images', express.static(path.join(__dirname, './assets/images')));
 
 // Handle all other routes
-app.get('*', async (req, res, next) => {
+app.get('*', async (req: express.Request<{ lng: string }, any, any, any, Record<string, any>>, res, next) => {
   try {
     // Get Firestore instance
     const db = admin.firestore();
@@ -177,8 +179,14 @@ app.get('*', async (req, res, next) => {
     const linkPath = urlObject.pathname;
 
     // Fetch link document
-    const snapshotQuery = collection.where('path', '==', linkPath).limit(1);
-    const linkSnapshot = await snapshotQuery.get();
+    let linkSnapshot: admin.firestore.QuerySnapshot<admin.firestore.DocumentData>
+    if (linkPath.startsWith('/s/')) {
+      const snapshotQuery = collection.where('shortpath', '==', linkPath.substring('/s/'.length)).limit(1);
+      linkSnapshot =  await snapshotQuery.get();
+    } else {
+      const snapshotQuery = collection.where('path', '==', linkPath).limit(1);
+      linkSnapshot =  await snapshotQuery.get();
+    }
 
     const linkFound = linkSnapshot.docs.length !== 0;
 
@@ -188,7 +196,10 @@ app.get('*', async (req, res, next) => {
     }
 
     const flowLink = linkSnapshot.docs[0].data() as FlowLink;
-    const source = await getFlowLinkResponse(flowLink);
+
+    const lang = req.params.lng;
+
+    const source = await getFlowLinkResponse(flowLink, lang);
 
     res.setHeader('Cache-Control', 'no-cache');
     return res.status(200).send(source);
@@ -216,11 +227,11 @@ function getNotFoundResponse(): string {
   return source;
 }
 
-async function getFlowLinkResponse(flowLink: FlowLink): Promise<string> {
+async function getFlowLinkResponse(flowLink: FlowLink, lang: string): Promise<string> {
   // Gather metadata
-  let title = flowLink['og:title'] || '';
-  let description = flowLink['og:description'] || '';
-  let image = flowLink['og:image'] || '';
+  let title = flowLink['og']?.title?.[lang] || '';
+  let description = flowLink['og']?.description?.[lang] || '';
+  let image = flowLink['og']?.image?.[lang] || '';
 
   const redirectToStore = flowLink.redirectToStore || false;
   const redirectUrl = flowLink.redirectUrl || '';
