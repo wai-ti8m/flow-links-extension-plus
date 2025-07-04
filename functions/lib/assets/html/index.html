@@ -69,27 +69,32 @@
   </body>
 
   <script>
-    if ('{{redirectToStore}}' == 'true') {
-      var result = detect.parse(navigator.userAgent);
-      if (result.os.family === 'iOS') {
-        window.location.href = 'https://apps.apple.com/us/app/{{appStoreID}}';
-      } else if (result.os.family.includes('Android')) {
-        if ('{{androidScheme}}' != 'false') {
-          const fallbackUrl = encodeURIComponent(
-            'https://play.google.com/store/apps/details?id={{androidBundleID}}',
-          );
-          window.location.href = `intent:#Intent;scheme={{androidScheme}};package={{androidBundleID}};S.browser_fallback_url=${fallbackUrl};end`;
+    const search = new URLSearchParams(window.location.search);
+    const isPreview = search.has('preview');
+
+    if (!isPreview) {
+      if ('{{redirectToStore}}' == 'true') {
+        var result = detect.parse(navigator.userAgent);
+        if (result.os.family === 'iOS') {
+          window.location.href = 'https://apps.apple.com/us/app/{{appStoreID}}';
+        } else if (result.os.family.includes('Android')) {
+          if ('{{androidScheme}}' != 'false') {
+            const fallbackUrl = encodeURIComponent(
+              'https://play.google.com/store/apps/details?id={{androidBundleID}}',
+            );
+            window.location.href = `intent:#Intent;scheme={{androidScheme}};package={{androidBundleID}};S.browser_fallback_url=${fallbackUrl};end`;
+          } else {
+            window.location.href =
+              'https://play.google.com/store/apps/details?id={{androidBundleID}}';
+          }
         } else {
-          window.location.href =
-            'https://play.google.com/store/apps/details?id={{androidBundleID}}';
+          if ('{{redirectUrl}}' != '') {
+            window.location.href = '{{redirectUrl}}';
+          }
         }
-      } else {
-        if ('{{redirectUrl}}' != '') {
-          window.location.href = '{{redirectUrl}}';
-        }
+      } else if ('{{redirectUrl}}' != '') {
+        window.location.href = '{{redirectUrl}}';
       }
-    } else if ('{{redirectUrl}}' != '') {
-      window.location.href = '{{redirectUrl}}';
     }
   </script>
 </html>
